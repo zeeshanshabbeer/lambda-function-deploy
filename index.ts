@@ -8,7 +8,7 @@ import * as _ from "lodash";
 export const handler: Handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResultV2> => {
-  const max = 10;
+  const max = 80;
   const val = _.random(max);
   const res = {
     statusCode: 200,
