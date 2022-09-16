@@ -15,7 +15,6 @@ Resources:
   lambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
-      Description:
       FunctionName: testLambda
       Handler: src/index.handler
       MemorySize: 128
