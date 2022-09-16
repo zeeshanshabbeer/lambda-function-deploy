@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Resources:
+  lambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description:
+      FunctionName: testLambda
+      Handler: index.handler
+      KmsKeyArn:
+      MemorySize: 128
+      Role: role-arn
+      Runtime: nodejs | nodejs4.3 | nodejs6.10 | nodejs8.10 | java8 | python2.7 | python3.6 | dotnetcore1.0 | dotnetcore2.0 | dotnetcore2.1 | nodejs4.3-edge | go1.x
+      Timeout:
+      VpcConfig:
+        SecurityGroupIds:
+          - sg-id
+        SubnetIds:
+          - subnet-id
+      Environment:
+        Variables:
+          key1: value1 # A map of key-value pairs that the Lambda function can access
+      Code:
+        S3Bucket: lambda-function234
+        S3Key:
+        S3ObjectVersion:
+        ZipFile:
+      Tags:
+        - Key: keyname
+          Value: value
