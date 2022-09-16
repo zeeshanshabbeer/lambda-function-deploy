@@ -18,7 +18,10 @@ jobs:
         run: mkdir -p ./artifacts
         
       - name: Copy Files into EC2
-        run: cp -r . ./artifacts
+        run: cp -r ./src ./artifacts
+        
+      - name: Copy Stack file in artifacts
+        run: cp -r ./Stack.yaml ./artifacts
         
       - name: Install Zip
         uses: montudor/action-zip@v1.0.0
