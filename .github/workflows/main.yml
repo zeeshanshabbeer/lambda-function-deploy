@@ -13,19 +13,25 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "18.1.0"
+          
+      - name: Make directory in EC2
+        run: mkdir -p ./artifacts
+        
+      - name: Copy Files into EC2
+        run: cp -r ./* ./artifacts
+        
+      - name: Install Zip
+        uses: montudor/action-zip@v1.0.0
+        
+      - name: Create Zip of lambda
+        run: zip -r ./artifacts/lambda.zip ./src/index.js
+        
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-      - name: npm install
-        env:
-          CI: true
-        run: |
-          npm ci
-      - name: deploy
-        run: |
-          npx ncc build index.ts
-          zip -j deploy.zip ./dist/*
-          aws lambda update-function-code --function-name=lambda-function-deploy --zip-file=fileb://deploy.zip
+          
+      - name: Upload zip file to s3 bucket
+        run: aws s3 cp ./artifacts/lambda.zip s3://lambda-function234
