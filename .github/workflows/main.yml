@@ -49,7 +49,7 @@ jobs:
     needs: deploy_lambda
     steps:
       - name: download artifacts
-        uses: actions/download-artifacts@v3
+        uses: actions/download-artifact@v3
         with:
           name: lambda
           path: artifacts
