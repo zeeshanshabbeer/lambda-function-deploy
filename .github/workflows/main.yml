@@ -13,28 +13,56 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "18.1.0"
-          
+
       - name: Make directory in EC2
         run: mkdir -p ./artifacts
-        
+
       - name: Copy Files into EC2
         run: cp -r ./src ./artifacts
-        
+
       - name: Copy Stack file in artifacts
         run: cp -r ./Stack.yaml ./artifacts
-        
+
       - name: Install Zip
         uses: montudor/action-zip@v1.0.0
-        
+
       - name: Create Zip of lambda
         run: zip -r ./artifacts/lambda.zip ./src/index.js
-        
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: lambda
+          path: ./artifacts
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-          
+
       - name: Upload zip file to s3 bucket
         run: aws s3 cp ./artifacts/lambda.zip s3://lambda-function234
+  deploy-stack:
+    runs-on: ubuntu-latest
+    needs: deploy_lambda
+    steps:
+      - name: download artifacts
+        uses: actions/download-artifacts@v3
+        with:
+          name: lambda
+          path: artifacts
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy to AWS Cloud Formation
+        uses: aws-actions/aws-cloudformation-github-deploy@v1
+        with:
+          name: testStack
+          template: artifacts/Stack.yaml
